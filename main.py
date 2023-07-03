@@ -24,7 +24,8 @@ engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"
 
 
 print("################### START SCRAPING ###############")
-# page_num=1
+
+car_brand_list=[]
 car_title_list=[]
 car_year_list=[]
 price_list=[]
@@ -52,8 +53,12 @@ for page_num in range(1,39,1):
         car_year_list.append(int(car_year))
     
         # get car_model_name from index 2-7 ; len(each_car_el) == 8. use regular expression to replace "spaces, tabs and newline chars" with "_"
-        car_model=re.sub(r'\s+', '_',''.join(each_car_el[2:7]).strip())
+        car_model=re.sub(r'\s+', '_',''.join(each_car_el[3:7]).strip())
         car_title_list.append(car_model)
+
+        # get car_brand from index 3 ; len(each_car_el) == 8. use regular expression to replace "spaces, tabs and newline chars" with "_"
+        car_brand=re.sub(r'\s+', '',''.join(each_car_el[2]).strip())
+        car_brand_list.append(car_brand)
 
     price_html = soup.find_all('div', { 'class' : 'mod-card__price__total' })
     for each_price in price_html:
@@ -80,14 +85,27 @@ for page_num in range(1,39,1):
         drive_type=re.sub(r'\s+', '_',''.join(each_car_el[2]).strip())
         drive_type_list.append(drive_type)
 
-df = pd.DataFrame({'model':car_title_list, 'year' : car_year_list, 'price' : price_list, 'currency' : currency_list \
+df = pd.DataFrame({'brand' : car_brand_list,'model':car_title_list, 'year' : car_year_list, 'price' : price_list, 'currency' : currency_list \
                 , 'pay_per_month' : pay_per_month , 'kilometers_driven' : km_driven_list ,'transmission_type' : drive_type_list})
 
 print("################### PROCESS DONE ###############")
 print(df)
 
-# df.to_csv('carsome.csv', index=False,encoding='utf-8')
-
 # connect to Mysql db
 
-df.to_sql('car_info', con = engine, if_exists = 'append', chunksize = 1000, index= False)
+create_table_statement="""
+        CREATE TABLE carsome_db.car_info (
+            `index` int,
+            `brand` varchar(45),
+            `model` varchar(255),
+            `year` int,
+            `price` int,
+            `currency` varchar(45),
+            `pay_per_month` varchar(45),
+            `kilometers_driven` varchar(45),
+            `transmission_type` varchar(45)
+            );
+"""
+
+df.to_sql('car_info', con = engine, if_exists = 'append', chunksize = 1000)
+# df.to_sql('car_info', con = engine, if_exists = 'append', chunksize = 1000, index= False)
