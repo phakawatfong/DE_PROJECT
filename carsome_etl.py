@@ -102,6 +102,6 @@ print("##################### DONE ETL ##############")
 
 ### save data_frame to csv file to do further visualization.
 
-carsome_df.to_csv('carsome_clean.csv', index=False)
+carsome_df.to_csv('C:\\Users\\asus\\Desktop\\Kids\\Kids_Programming_Project\\de_car_proj\\output\\carsome_clean.csv', index=False)
 
 

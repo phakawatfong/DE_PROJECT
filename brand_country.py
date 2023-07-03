@@ -2,10 +2,10 @@ import json
 import pandas as pd
 
 # Read the JSON file and load the data into a dictionary
-with open('manufacturer_country.json', 'r') as f:
+with open('C:\\Users\\asus\\Desktop\\Kids\\Kids_Programming_Project\\de_car_proj\\manufacturer_country.json', 'r') as f:
     loaded_dict = json.load(f)
 
-df = pd.read_csv('carsome_clean.csv')
+df = pd.read_csv('C:\\Users\\asus\\Desktop\\Kids\\Kids_Programming_Project\\de_car_proj\\output\\carsome_clean.csv')
 
 # Create a mapping dictionary from the loaded_dict
 brand_country_map = {}
@@ -20,5 +20,5 @@ new_df['original_country'] = df['brand'].map(brand_country_map)
 new_df['index'] = df.index
 
 # Save the new dataframe as a CSV file
-new_df.to_csv('manufactured_country.csv', index=False)
+new_df.to_csv('C:\\Users\\asus\\Desktop\\Kids\\Kids_Programming_Project\\de_car_proj\\output\\manufactured_country.csv', index=False)
 

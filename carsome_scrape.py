@@ -8,7 +8,7 @@ from configparser import ConfigParser
 
 def get_config_dict():
     config = ConfigParser()
-    config.read(".config.conf")
+    config.read("C:\\Users\\asus\\Desktop\\Kids\\Kids_Programming_Project\\de_car_proj\\.config.conf")
     details_dict = dict(config.items("MYSQL_CONF"))
     return details_dict
 
