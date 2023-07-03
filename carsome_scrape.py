@@ -12,6 +12,7 @@ def get_config_dict():
     details_dict = dict(config.items("MYSQL_CONF"))
     return details_dict
 
+## noted that configuration file will not be published into github.
 configuration_param = get_config_dict()
 
 # create sqlalchemy engine
