@@ -2,10 +2,28 @@ import re
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import os
 
-exec_path = os.getcwd()
+from sqlalchemy import create_engine
+from configparser import ConfigParser
 
+def get_config_dict():
+    config = ConfigParser()
+    config.read(".config.conf")
+    details_dict = dict(config.items("MYSQL_CONF"))
+    return details_dict
+
+configuration_param = get_config_dict()
+
+# create sqlalchemy engine
+engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"
+                       .format(user=configuration_param["user"],
+                               pw=configuration_param["password"],
+                               host=configuration_param["host"],
+                               port=configuration_param["port"],
+                               db=configuration_param["db"]))
+
+
+print("################### START SCRAPING ###############")
 # page_num=1
 car_title_list=[]
 car_year_list=[]
@@ -13,8 +31,11 @@ price_list=[]
 pay_per_month=[]
 km_driven_list=[]
 drive_type_list=[]
+currency_list=[]
 
-for page_num in range(0,38,1):
+# total number of pages = 38
+for page_num in range(1,39,1):
+# for page_num in range(1,2,1):
     base_url = f"https://www.carsome.co.th/buy-car?utm_source=google&utm_medium=search&utm_campaign=18136584206.th-b2c-th-conv-search_core&utm_content=152731939332.th_b2c_generic_core&utm_term=652763940374.%E0%B8%A3%E0%B8%96%E0%B8%A1%E0%B8%B7%E0%B8%AD%202.e.c&pageNo={page_num}"
 
     html = requests.get(base_url)
@@ -38,8 +59,10 @@ for page_num in range(0,38,1):
     for each_price in price_html:
         each_car_el=each_price.text.splitlines()
         # use regular expression to replace "spaces, tabs, commas (',') and newline chars" with ""
-        car_price=re.sub(r'\s+', ' ',''.join(each_car_el).strip()).replace(',','')
+        car_price=re.sub(r'\s+', '',''.join(each_car_el[0]).strip()).replace(',','')
+        currency=re.sub(r'\s+', '',''.join(each_car_el[1]).strip())
         price_list.append(car_price)
+        currency_list.append(currency)
 
     installment_html = soup.find_all('div', { 'class' : 'mod-tooltipMonthPay' })
     for each_inst in installment_html:
@@ -51,15 +74,20 @@ for page_num in range(0,38,1):
     km_html = soup.find_all('div', { 'class' : 'mod-card__car-other' })
     for each_km in km_html:
         each_car_el=each_km.text.split(' ')
-        km_driven=re.sub(r'\s+', '_',''.join(each_car_el[0:1]).strip())
+        km_driven=re.sub(r'\s+', '_',''.join(each_car_el[0:1]).strip()).replace(',','')
         km_driven_list.append(km_driven)
 
         drive_type=re.sub(r'\s+', '_',''.join(each_car_el[2]).strip())
         drive_type_list.append(drive_type)
 
-df = pd.DataFrame({'model':car_title_list, 'year' : car_year_list, 'price' : price_list , 'pay_per_month' : pay_per_month \
-                   , 'kilometers_driven' : km_driven_list ,'transmission_type' : drive_type_list})
+df = pd.DataFrame({'model':car_title_list, 'year' : car_year_list, 'price' : price_list, 'currency' : currency_list \
+                , 'pay_per_month' : pay_per_month , 'kilometers_driven' : km_driven_list ,'transmission_type' : drive_type_list})
 
-# print(df)
+print("################### PROCESS DONE ###############")
+print(df)
 
-df.to_csv('carsome.csv', index=False,encoding='utf-8')
+# df.to_csv('carsome.csv', index=False,encoding='utf-8')
+
+# connect to Mysql db
+
+df.to_sql('car_info', con = engine, if_exists = 'append', chunksize = 1000, index= False)
