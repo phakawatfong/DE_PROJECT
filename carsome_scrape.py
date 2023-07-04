@@ -110,3 +110,5 @@ create_table_statement="""
 
 df.to_sql('car_info', con = engine, if_exists = 'append', chunksize = 1000)
 # df.to_sql('car_info', con = engine, if_exists = 'append', chunksize = 1000, index= False)
+
+ssadasdasdasd
