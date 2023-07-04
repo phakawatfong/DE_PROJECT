@@ -7,7 +7,7 @@ from configparser import ConfigParser
 
 def get_config_dict():
     config = ConfigParser()
-    config.read(".config.conf")
+    config.read("config.conf")
     details_dict = dict(config.items("MYSQL_CONF"))
     return details_dict
 
