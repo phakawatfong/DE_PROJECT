@@ -39,7 +39,7 @@ def send_email(configuration_param, check_file_status):
         TEXT = f"ERROR: Not found `final_carsome.csv` file in the {output_dir} directory."
 
     msg['From'] = configuration_param["app_user"]
-    msg['To'] = configuration_param["app_user"]
+    msg['To'] = configuration_param["mail_receiver"]
     msg.set_content(TEXT)
 
     # creates SMTP session
