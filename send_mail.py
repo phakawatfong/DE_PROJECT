@@ -52,8 +52,8 @@ def send_email(configuration_param, check_file_status):
 
 
 # Main Program
-readFromConfig="KIDS_GMAIL_PASSWORD"
-configuration_param = get_config_dict(config_dir, readFromConfig)
+CONFIG_KEY="KIDS_GMAIL_PASSWORD"
+configuration_param = get_config_dict(config_dir, CONFIG_KEY)
 
 check_file = checkFileExists(output_dir)
 send_email(configuration_param, check_file)

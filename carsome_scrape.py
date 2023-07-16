@@ -2,15 +2,16 @@ import re
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import os 
 
 from sqlalchemy import create_engine
 from configparser import ConfigParser
 
-def scrape_data():
+def scrape_data(configuration_directory, CONFIG_KEY ):
     def get_config_dict():
         config = ConfigParser()
-        config.read("C:\\Users\\asus\\Desktop\\Kids\\Kids_Programming_Project\\de_car_proj\\config.conf")
-        details_dict = dict(config.items("MYSQL_CONF"))
+        config.read(configuration_directory)
+        details_dict = dict(config.items(CONFIG_KEY))
         return details_dict
 
     ## noted that configuration file will not be published into github.
@@ -112,4 +113,10 @@ def scrape_data():
     df.to_sql('car_info', con = engine, if_exists = 'append', chunksize = 1000)
     # df.to_sql('car_info', con = engine, if_exists = 'append', chunksize = 1000, index= False)
 
-scrape_data()
+# Set up parameter
+CONFIG_KEY="MYSQL_CONF"
+current_dir=os.getcwd()
+config_dir=f"{current_dir}\\config.conf"
+
+# Main Program
+scrape_data(config_dir, CONFIG_KEY)

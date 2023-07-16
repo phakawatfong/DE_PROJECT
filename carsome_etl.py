@@ -4,14 +4,15 @@ import pandas as pd
 from configparser import ConfigParser
 
 
-def etl_process():
-    def get_config_dict():
+
+def etl_process(config_dir, param_dict, output_etl_path):
+    def get_config_dict(config_dir, param_dict):
         config = ConfigParser()
-        config.read("config.conf")
-        details_dict = dict(config.items("MYSQL_CONF"))
+        config.read(config_dir)
+        details_dict = dict(config.items(param_dict))
         return details_dict
 
-    configuration_param = get_config_dict()
+    configuration_param = get_config_dict(config_dir, CONFIG_KEY)
 
 
     class Config():
@@ -102,7 +103,17 @@ def etl_process():
 
     ### save data_frame to csv file to do further visualization.
 
-    carsome_df.to_csv('C:\\Users\\asus\\Desktop\\Kids\\Kids_Programming_Project\\de_car_proj\\output\\carsome_clean.csv', index=False)
+    carsome_df.to_csv(output_etl_file, index=False)
 
-etl_process()
+
+# set up parameter
+current_dir=os.getcwd()
+config_dir=f"{current_dir}\\config.conf"
+output_dir=f"{current_dir}\\output"
+output_etl_file=f"{output_dir}\\carsome_clean.csv"
+CONFIG_KEY="MYSQL_CONF"
+
+
+# Main Program
+etl_process(config_dir, CONFIG_KEY, output_etl_file)
 
