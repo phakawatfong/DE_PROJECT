@@ -2,8 +2,6 @@ import requests
 import json
 import pandas as pd
 import os
-import send_mail
-
 
 
 def getCustomerAPI(url, CONVERSION_RATE):
@@ -27,12 +25,12 @@ def getCustomerAPI(url, CONVERSION_RATE):
 
 def customerTobeSendEmail(df, output_file_path):
     # EDA statement /  get data of the customers which has salary more than 30,000 THB / months
-    high_salary_cust = df[df['salary_in_THB'] > 30000]
+    high_salary_cust = df[df['salary_in_THB'] > 33000]
 
     #### print statement.
-    # print(high_salary_cust[['first_name', 'email', 'salary_in_THB']])
+    print(high_salary_cust[['first_name', 'email', 'salary_in_THB']].count())
 
-    ## save  customers which has salary more than 30,000 THB / months into csv file for further use.
+    ## save  customers which has salary more than 33,000 THB / months into csv file for further use.
     high_salary_cust.to_csv(output_file_path, index=False)
     
     s=""
@@ -43,14 +41,29 @@ def customerTobeSendEmail(df, output_file_path):
     return list_of_email
 
 def writeEmailfile(output_file_path, list_of_email):
-    # append customer's email with more than 30,000 thb/month into conf file
-    config_file_read= open(output_file_path, 'w')
-    config_file_read.write(list_of_email)
-    config_file_read.close()
+    search_word='CUSTOMER_MAIL='
+    with open(output_file_path, 'r') as file:
+        lines = file.readlines()
+
+    # Find the line containing the search word and replace it with the new text
+    replaced = False  # Flag to track if line has been replaced
+    for i in range(len(lines)):
+        if search_word in lines[i]:
+            lines[i] =  search_word + list_of_email + '\n'
+            replaced = False  # Flag to track if line has been replaced
+            break
+
+    # If line was not found, append it to the end of the file
+    if not replaced:
+        lines.append(search_word + list_of_email + '\n')
+
+    # Write the modified lines back to the file
+    with open(output_file_path, 'w') as file:
+        file.writelines(lines)
 
 #### set up parameter 
 current_dir=os.getcwd()
-customer_email_file=f"{current_dir}\\customer_email_file.txt"
+customer_email_file=f"{current_dir}\\config.conf"
 output_dir=f"{current_dir}\\output"
 output_etl_file=f"{output_dir}\\high_salary_cust.csv"
 url="https://api.slingacademy.com/v1/sample-data/files/customers.json"

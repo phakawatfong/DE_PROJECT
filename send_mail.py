@@ -10,6 +10,7 @@ current_dir=os.getcwd()
 # print("current_dir={}".format(current_dir))
 config_dir=f"{current_dir}\\config.conf"
 output_dir=f"{current_dir}\\output"
+file_to_be_check = f"{output_dir}\\final_carsome.csv"
 
 # datetime object containing current date and time
 now = datetime.now()
@@ -17,8 +18,7 @@ now = datetime.now()
 dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
 # path configuration.
-def checkFileExists(output_dir):
-    path = f"{output_dir}\\final_carsome.csv"
+def checkFileExists(path):
     check_file_status = os.path.isfile(path)
     return check_file_status
 
@@ -55,7 +55,7 @@ def send_email(configuration_param, check_file_status):
 CONFIG_KEY="KIDS_GMAIL_PASSWORD"
 configuration_param = get_config_dict(config_dir, CONFIG_KEY)
 
-check_file = checkFileExists(output_dir)
+check_file = checkFileExists(file_to_be_check)
 send_email(configuration_param, check_file)
 
 
