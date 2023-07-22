@@ -28,7 +28,7 @@ def get_config_dict(config_dir, param_dict):
     details_dict = dict(config.items(param_dict))
     return details_dict
 
-def send_email(configuration_param, check_file_status):
+def send_email(configuration_param, check_file_status, to_customer):
     msg = EmailMessage()
 
     if check_file_status == True:
@@ -40,7 +40,7 @@ def send_email(configuration_param, check_file_status):
 
     msg['From'] = configuration_param["app_user"]
 
-    if toCustomer.lower() == "y":
+    if to_customer.lower() == "y":
         msg['To'] = configuration_param["customer_mail"]
     else:
         msg['To'] = configuration_param["mail_receiver"]
@@ -57,14 +57,28 @@ def send_email(configuration_param, check_file_status):
 
 
 # Main Program
-print("##################### send_mail.py IS RUNNING #######################")
-toCustomer=input("Send an email to the customer (Y/N) ? : ")
+def main():
+    print("##################### send_mail.py IS RUNNING #######################")
+    to_customer = input("Send an email to the customer (Y/N) ? : ")
 
-CONFIG_KEY="KIDS_GMAIL_PASSWORD"
-configuration_param = get_config_dict(config_dir, CONFIG_KEY)
+    # SETUP parameter.
+    current_dir = os.getcwd()
+    config_dir = os.path.join(current_dir, "config.conf")
+    output_dir = os.path.join(current_dir, "output")
+    file_to_be_check = os.path.join(output_dir, "final_carsome.csv")
 
-check_file = checkFileExists(file_to_be_check)
-send_email(configuration_param, check_file)
+    # datetime object containing current date and time
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+    CONFIG_KEY = "KIDS_GMAIL_PASSWORD"
+    configuration_param = get_config_dict(config_dir, CONFIG_KEY)
+
+    check_file = checkFileExists(file_to_be_check)
+    send_email(configuration_param, check_file, to_customer)
+
+if __name__ == "__main__":
+    main()
 
 
 

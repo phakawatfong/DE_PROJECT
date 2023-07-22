@@ -22,9 +22,9 @@ def getCustomerAPI(url, CONVERSION_RATE):
 
     return customer_data_df
 
-def customerTobeSendEmail(df, output_file_path):
+def customerTobeSendEmail(df, output_file_path, salary_threshold):
     # EDA statement /  get data of the customers which has salary more than 30,000 THB / months
-    high_salary_cust = df[df['salary_in_THB'] > 33000]
+    high_salary_cust = df[df['salary_in_THB'] > salary_threshold]
 
     #### print statement.
     print(high_salary_cust[['first_name', 'email', 'salary_in_THB']].count())
@@ -61,21 +61,35 @@ def writeEmailfile(output_file_path, list_of_email):
         file.writelines(lines)
 
 #### set up parameter 
-callSendMail=input("Do you want to call send_mail.py (Y/N) ? : ")
+def main():
+    call_send_mail = input("Do you want to call send_mail.py (Y/N) ? : ")
 
-current_dir=os.getcwd()
-customer_email_file=f"{current_dir}\\config.conf"
-output_dir=f"{current_dir}\\output"
-output_etl_file=f"{output_dir}\\high_salary_cust.csv"
-url="https://api.slingacademy.com/v1/sample-data/files/customers.json"
-CONVERSION_RATE=float(34.62) # as of 2023-07-16
+    current_dir = os.getcwd()
+    customer_email_file = os.path.join(current_dir, "config.conf")
+    output_dir = os.path.join(current_dir, "output")
+    output_etl_file = os.path.join(output_dir, "high_salary_cust.csv")
 
-customer_data_df = getCustomerAPI(url, CONVERSION_RATE)
-list_of_email_txt = customerTobeSendEmail(customer_data_df, output_etl_file)
-writeEmailfile(customer_email_file, list_of_email_txt)
+    url = "https://api.slingacademy.com/v1/sample-data/files/customers.json"
+    conversion_rate = float(34.62)  # as of 2023-07-16
+    salary_threshold = 33000
 
-if callSendMail.lower() == "y":
-    import send_mail as send_mail_script
-    send_mail_script
-else:
-    exit(0)
+    customer_data_df = getCustomerAPI(url, conversion_rate)
+    if customer_data_df is not None:
+        list_of_email_txt = customerTobeSendEmail(customer_data_df, output_etl_file, salary_threshold)
+        writeEmailfile(customer_email_file, list_of_email_txt)
+
+    if call_send_mail.lower() == "y":
+        try:
+            import send_mail as send_mail_script
+            # Call the main function of the send_mail script if available
+            if hasattr(send_mail_script, 'main') and callable(getattr(send_mail_script, 'main')):
+                send_mail_script.main()
+            else:
+                print("send_mail.py does not have a main function.")
+        except ImportError:
+            print("Error importing send_mail.py")
+    else:
+        exit(0)
+
+if __name__ == "__main__":
+    main()
