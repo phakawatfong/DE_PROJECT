@@ -3,7 +3,6 @@ import json
 import pandas as pd
 import os
 
-
 def getCustomerAPI(url, CONVERSION_RATE):
     CONVERSION_RATE=CONVERSION_RATE
     url_link = url
@@ -50,18 +49,20 @@ def writeEmailfile(output_file_path, list_of_email):
     for i in range(len(lines)):
         if search_word in lines[i]:
             lines[i] =  search_word + list_of_email + '\n'
-            replaced = False  # Flag to track if line has been replaced
+            replaced = True  # Flag to track if line has been replaced
             break
 
     # If line was not found, append it to the end of the file
     if not replaced:
-        lines.append(search_word + list_of_email + '\n')
+        lines.append('\n' + search_word + list_of_email + '\n')
 
     # Write the modified lines back to the file
     with open(output_file_path, 'w') as file:
         file.writelines(lines)
 
 #### set up parameter 
+callSendMail=input("Do you want to call send_mail.py (Y/N) ? : ")
+
 current_dir=os.getcwd()
 customer_email_file=f"{current_dir}\\config.conf"
 output_dir=f"{current_dir}\\output"
@@ -72,3 +73,9 @@ CONVERSION_RATE=float(34.62) # as of 2023-07-16
 customer_data_df = getCustomerAPI(url, CONVERSION_RATE)
 list_of_email_txt = customerTobeSendEmail(customer_data_df, output_etl_file)
 writeEmailfile(customer_email_file, list_of_email_txt)
+
+if callSendMail.lower() == "y":
+    import send_mail as send_mail_script
+    send_mail_script
+else:
+    exit(0)

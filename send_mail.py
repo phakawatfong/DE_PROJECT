@@ -39,7 +39,12 @@ def send_email(configuration_param, check_file_status):
         TEXT = f"ERROR: Not found `final_carsome.csv` file in the {output_dir} directory."
 
     msg['From'] = configuration_param["app_user"]
-    msg['To'] = configuration_param["mail_receiver"]
+
+    if toCustomer.lower() == "y":
+        msg['To'] = configuration_param["customer_mail"]
+    else:
+        msg['To'] = configuration_param["mail_receiver"]
+
     msg.set_content(TEXT)
 
     # creates SMTP session
@@ -52,6 +57,9 @@ def send_email(configuration_param, check_file_status):
 
 
 # Main Program
+print("##################### send_mail.py IS RUNNING #######################")
+toCustomer=input("Send an email to the customer (Y/N) ? : ")
+
 CONFIG_KEY="KIDS_GMAIL_PASSWORD"
 configuration_param = get_config_dict(config_dir, CONFIG_KEY)
 
