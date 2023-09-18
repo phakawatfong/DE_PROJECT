@@ -1,2 +1,3 @@
 # prevent configuration file to be push on github
 *.conf
+__pycache__
