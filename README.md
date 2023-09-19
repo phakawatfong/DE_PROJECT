@@ -7,3 +7,19 @@ Furthermore, requests some  API customer data in order to run a scenario in whic
 
 
 <img width="959" alt="image" src="https://github.com/phakawatfong/carSome_Project/assets/105853659/3b4c4536-03f7-4c8e-acaa-24db0703f685">
+
+
+
+## fetch docker-compose.yml files
+
+```
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.7.1/docker-compose.yaml'
+```
+
+## prepare environment for Airflow Docker
+
+
+```
+mkdir -p ./dags ./logs ./plugins ./config
+echo -e "AIRFLOW_UID=$(id -u)" > .env
+```
