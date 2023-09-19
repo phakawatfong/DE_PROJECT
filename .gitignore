@@ -1,3 +1,6 @@
 # prevent configuration file to be push on github
 *.conf
 __pycache__
+.env
+env_conf/*
+logs/
