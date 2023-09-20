@@ -23,3 +23,21 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.7.1/docker-compose.y
 mkdir -p ./dags ./logs ./plugins ./config
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 ```
+
+
+## Command to go into Postgres shell
+
+***docker exec <container_id> -it psql -U <user_name>***
+
+```
+docker exec 66c93e922289  -it psql -U airflow
+```
+
+
+## PSQL command
+
+list database
+
+```
+\l
+```
