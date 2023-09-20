@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "carsome_project"
+version = "0.1.0"
+description = ""
+authors = ["kids <phakawatfong@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^2.0"
+beautifulsoup4 = "^4.12.2"
+lxml = "^4.9.3"
+configparser = "^6.0.0"
+requests = "^2.29.0"
+pysftp = "^0.2.9"
+psycopg2 = "^2.9.6"
+google-cloud-bigquery = "^3.9.0"
+google-cloud-storage = "^2.8.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

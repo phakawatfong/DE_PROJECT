@@ -55,8 +55,8 @@ def _scrape_data_into_postgres(**context):
     currency_list=[]
 
     # total number of pages = 38
-    # for page_num in range(1,39,1):
-    for page_num in range(1,2,1):
+    for page_num in range(1,39,1):
+    # for page_num in range(1,2,1):
         base_url = f"https://www.carsome.co.th/buy-car?utm_source=google&utm_medium=search&utm_campaign=18136584206.th-b2c-th-conv-search_core&utm_content=152731939332.th_b2c_generic_core&utm_term=652763940374.%E0%B8%A3%E0%B8%96%E0%B8%A1%E0%B8%B7%E0%B8%AD%202.e.c&pageNo={page_num}"
 
         html = requests.get(base_url)
@@ -115,7 +115,7 @@ with DAG(
     dag_id='dag_with_postgres_operator_v01',
     default_args=default_args,
     start_date=datetime(2023, 9, 19),
-    schedule_interval='0 0  * * *',
+    schedule_interval=None,
     tags=['carsome']
 ) as dag:
     
