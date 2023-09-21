@@ -4,11 +4,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import os 
 
+from sqlalchemy import create_engine
+from configparser import ConfigParser
 
-def _scrape_data():
+def _scrape_data_to_dataframe_then_csv():
 
+    OUTPUT_PATH='/opt/airflow/output'
     base_url = "https://www.carsome.co.th/buy-car"
-
     html = requests.get(base_url)
     soup = BeautifulSoup(html.text, "html.parser")
 
@@ -33,8 +35,6 @@ def _scrape_data():
     km_driven_list=[]
     drive_type_list=[]
     currency_list=[]
-
-    OUTPUT_PATH='/opt/airflow/output'
 
     # total number of pages parse from num_of_max_page
     for page_num in range(1,num_of_max_page,1):
@@ -87,10 +87,14 @@ def _scrape_data():
             drive_type=re.sub(r'\s+', '_',''.join(each_car_el[2]).strip())
             drive_type_list.append(drive_type)
 
-    df = pd.DataFrame({'brand' : car_brand_list,'model':car_title_list, 'year' : car_year_list, 'price' : price_list, 'currency' : currency_list \
-                    , 'pay_per_month' : pay_per_month , 'kilometers_driven' : km_driven_list ,'transmission_type' : drive_type_list})
-
-    print("################### PROCESS DONE ###############")
-    print(df)
-
+    df = pd.DataFrame({'brand' : car_brand_list,
+                       'model':car_title_list, 
+                       'year' : car_year_list, 
+                       'price' : price_list, 
+                       'currency' : currency_list , 
+                       'pay_per_month' : pay_per_month , 
+                       'kilometers_driven' : km_driven_list, 
+                       'transmission_type' : drive_type_list}
+                       )
+    
     df.to_csv(f"{OUTPUT_PATH}/carsome_web_scraped.csv")
