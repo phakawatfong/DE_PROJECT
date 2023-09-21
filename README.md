@@ -28,16 +28,32 @@ echo -e "AIRFLOW_UID=$(id -u)" > .env
 ## Command to go into Postgres shell
 
 ***docker exec <container_id> -it psql -U <user_name>***
+***docker exec <container_name> -it psql -U <user_name>***
 
 ```
-docker exec 66c93e922289  -it psql -U airflow
+docker exec -it de_car_proj-postgres-1 psql -U airflow
 ```
 
 
-## PSQL command
+## Postgres command
+ref : [https://www.commandprompt.com/education/how-to-show-tables-in-postgresql/]
 
 list database
 
 ```
-\l
+\l;
 ```
+
+access database
+
+***\c <database_name>;***
+```
+\c carsome_db;
+```
+
+list table
+
+```
+\dt;
+```
+
