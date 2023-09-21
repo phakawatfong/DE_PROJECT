@@ -38,22 +38,30 @@ docker exec -it de_car_proj-postgres-1 psql -U airflow
 ## Postgres command
 ref : [https://www.commandprompt.com/education/how-to-show-tables-in-postgresql/]
 
-list database
+List database
 
 ```
 \l;
 ```
 
-access database
+Access database
 
 ***\c <database_name>;***
 ```
 \c carsome_db;
 ```
 
-list table
+List table
 
 ```
 \dt;
+```
+
+Prepare new database for the project on Postgres through command line
+
+Note that, the DDL command has to be in ***UPPER CASE***
+
+```
+CREATE DATABASE carsome_db;
 ```
 
