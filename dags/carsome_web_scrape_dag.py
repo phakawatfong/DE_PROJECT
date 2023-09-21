@@ -7,8 +7,8 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.utils import timezone
 
-from script.carsome_web_scrape_then_csv import _scrape_data
-
+from script.carsome_web_scrape_then_csv import _scrape_data_to_dataframe_then_csv
+from script.carsome_web_scrape_insert_to_postgres import _scrape_data_then_insert_to_postgres
 
 ## Define DAGS
 # https://airflow.apache.org/docs/apache-airflow/1.10.12/tutorial.html
@@ -31,14 +31,9 @@ with DAG(
 ):
     start = EmptyOperator(task_id="start")
 
-    scrape_data_from_carsome_website = PythonOperator(
-        task_id = "scrape_carsome_website_then_save_to_csv",
-        python_callable = _scrape_data,
-    )
-
     create_carsome_table = PostgresOperator(
     task_id='create_posgres_table',
-    postgres_conn_id='postgres_no_schema',
+    postgres_conn_id='postgres_carsome_db_conn',
     sql="""
         CREATE TABLE IF NOT EXISTS carsome_scraped (
             index int,
@@ -54,4 +49,20 @@ with DAG(
     """
     )
 
-    start >> [scrape_data_from_carsome_website, create_carsome_table]
+    scrape_carsome_website_to_csv = PythonOperator(
+        task_id = "scrape_data_then_save_to_csv_file",
+        python_callable = _scrape_data_to_dataframe_then_csv,
+    )
+
+
+    insert_data_to_postgres = PythonOperator(
+        task_id = "insert_scraped_data_to_postgres",
+        python_callable = _scrape_data_then_insert_to_postgres,
+    )
+
+
+
+
+    # Task dependencies
+    start >> [scrape_carsome_website_to_csv, create_carsome_table]
+    create_carsome_table >> insert_data_to_postgres
