@@ -20,7 +20,7 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.7.1/docker-compose.y
 
 
 ```
-mkdir -p ./dags ./logs ./plugins ./config
+mkdir -p ./dags ./logs ./plugins ./config ./env_conf ./dags/script ./import_data ./output
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 ```
 
