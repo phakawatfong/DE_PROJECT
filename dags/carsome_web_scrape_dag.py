@@ -9,6 +9,7 @@ from airflow.utils import timezone
 
 from script.carsome_web_scrape_then_csv import _scrape_data_to_dataframe_then_csv
 from script.carsome_web_scrape_insert_to_postgres import _scrape_data_then_insert_to_postgres
+from script.get_data_from_postgres_to_gcs import _get_data_from_postgres, _load_data_to_gcs
 
 ## Define DAGS
 # https://airflow.apache.org/docs/apache-airflow/1.10.12/tutorial.html
@@ -60,9 +61,20 @@ with DAG(
         python_callable = _scrape_data_then_insert_to_postgres,
     )
 
+    extract_data_from_postgres = PythonOperator(
+        task_id = "query_data_from_postgres_then_load_to_gcs",
+        python_callable = _get_data_from_postgres,
+    )
+
+    load_data_to_google_cloud_storage = PythonOperator(
+        task_id = "load_data_from_csv_to_gcs",
+        python_callable = _load_data_to_gcs,
+    )
+
 
 
 
     # Task dependencies
     start >> [scrape_carsome_website_to_csv, create_carsome_table]
     create_carsome_table >> insert_data_to_postgres
+    insert_data_to_postgres >> extract_data_from_postgres >> load_data_to_google_cloud_storage
