@@ -97,4 +97,4 @@ def _scrape_data_to_dataframe_then_csv():
                        'transmission_type' : drive_type_list}
                        )
     
-    df.to_csv(f"{OUTPUT_PATH}/carsome_web_scraped.csv", index=False)
+    df.to_csv(f"{OUTPUT_PATH}/carsome_web_scraped.csv", sep=";", index=False)
