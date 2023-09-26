@@ -57,6 +57,13 @@ List table
 \dt;
 ```
 
+List columns of specific table
+***\d <table_name>***
+
+```
+\d carsome_scraped
+```
+
 Prepare new database for the project on Postgres through command line
 
 Note that, the DDL command has to be in ***UPPER CASE***
@@ -65,3 +72,12 @@ Note that, the DDL command has to be in ***UPPER CASE***
 CREATE DATABASE carsome_db;
 ```
 
+
+
+## Working with Google Cloud Platform (GCP)
+
+
+### create custom-role to access GoogleCloudStorage
+- 
+- 
+- 

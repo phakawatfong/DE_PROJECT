@@ -3,12 +3,14 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import os 
+from datetime import date
 
 from sqlalchemy import create_engine
 from configparser import ConfigParser
 
 def _scrape_data_to_dataframe_then_csv():
 
+    today = date.today()
     OUTPUT_PATH='/opt/airflow/output'
     base_url = "https://www.carsome.co.th/buy-car"
     html = requests.get(base_url)
@@ -26,6 +28,7 @@ def _scrape_data_to_dataframe_then_csv():
     # get max number
     sorted_list = sorted(page_list, reverse=True)
     num_of_max_page = int(sorted_list[0])
+    print(f"number of the maximum pages that will be scraped : {num_of_max_page}")
 
     car_brand_list=[]
     car_title_list=[]
@@ -97,4 +100,4 @@ def _scrape_data_to_dataframe_then_csv():
                        'transmission_type' : drive_type_list}
                        )
     
-    df.to_csv(f"{OUTPUT_PATH}/carsome_web_scraped.csv", sep=";", index=False)
+    df.to_csv(f"{OUTPUT_PATH}/raw_carsome_web_scraped-{today}.csv" , index=False)

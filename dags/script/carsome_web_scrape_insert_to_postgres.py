@@ -41,6 +41,7 @@ def _scrape_data_then_insert_to_postgres():
     # get max number
     sorted_list = sorted(page_list, reverse=True)
     num_of_max_page = int(sorted_list[0])
+    print(f"number of the maximum pages that will be scraped : {num_of_max_page}")
 
     car_brand_list=[]
     car_title_list=[]
@@ -114,4 +115,4 @@ def _scrape_data_then_insert_to_postgres():
     
     conn = engine.connect()
     conn.execute("TRUNCATE TABLE carsome_scraped")
-    df.to_sql('carsome_scraped', con = engine, if_exists = 'append', chunksize = 1000)
+    df.to_sql('raw_carsome_scraped', con = engine, if_exists = 'append', chunksize = 1000)
