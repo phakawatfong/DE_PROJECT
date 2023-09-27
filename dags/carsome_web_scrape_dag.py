@@ -9,7 +9,8 @@ from airflow.utils import timezone
 
 from script.carsome_web_scrape_then_csv import _scrape_data_to_dataframe_then_csv
 from script.carsome_web_scrape_insert_to_postgres import _scrape_data_then_insert_to_postgres
-from script.get_data_from_postgres_to_gcs import _etl_then_save_to_csv #, _load_data_to_gcs
+from script.etl_then_insert_to_curated_zone_postgres import _etl_then_save_to_csv #, _load_data_to_gcs
+from script.convert_json_data_to_csv import _get_car_brand_data
 
 ## Define DAGS
 # https://airflow.apache.org/docs/apache-airflow/1.10.12/tutorial.html
@@ -55,6 +56,10 @@ with DAG(
         python_callable = _scrape_data_to_dataframe_then_csv,
     )
 
+    get_brand_and_country_of_car_from_json_file = PythonOperator(
+        task_id = "convert_json_brand_of_car_to_csv",
+        python_callable = _get_car_brand_data,
+    )
 
     insert_data_to_postgres = PythonOperator(
         task_id = "insert_scraped_data_to_postgres",
@@ -94,6 +99,6 @@ with DAG(
 
 
     # Task dependencies
-    start >> [scrape_carsome_website_to_csv, create_carsome_raw_table]
+    start >> [scrape_carsome_website_to_csv, create_carsome_raw_table, get_brand_and_country_of_car_from_json_file]
     create_carsome_raw_table >> insert_data_to_postgres
     insert_data_to_postgres >> create_carsome_curate_table >> perform_etl_then_save_to_csv  # >> load_data_to_google_cloud_storage
