@@ -5,12 +5,17 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.utils.trigger_rule import TriggerRule
 from airflow.utils import timezone
 
 from script.carsome_web_scrape_then_csv import _scrape_data_to_dataframe_then_csv
 from script.carsome_web_scrape_insert_to_postgres import _scrape_data_then_insert_to_postgres
 from script.etl_then_insert_to_curated_zone_postgres import _etl_then_save_to_csv #, _load_data_to_gcs
 from script.convert_json_data_to_csv import _get_car_brand_data
+from script.upload_csv_to_gcs import _load_data_to_gcs
+
+
+csv_file_list = ["crt_carsome_web_scraped.csv", "manufactured_country_of_each_brand.csv"]
 
 ## Define DAGS
 # https://airflow.apache.org/docs/apache-airflow/1.10.12/tutorial.html
@@ -90,15 +95,25 @@ with DAG(
     """
     )
 
-    # load_data_to_google_cloud_storage = PythonOperator(
-    #     task_id = "load_data_from_csv_to_gcs",
-    #     python_callable = _load_data_to_gcs,
-    # )
+    load_curated_data_to_google_cloud_storage = PythonOperator(
+        task_id = f"load_curated_from_csv_to_gcs",
+        python_callable = _load_data_to_gcs,
+        op_kwargs = { "file_name" : "crt_carsome_web_scraped.csv" },
+        )
+    
+    load_manufacture_brand_country_data_to_google_cloud_storage = PythonOperator(
+        task_id = f"load_manufacture_brand_country_from_csv_to_gcs",
+        python_callable = _load_data_to_gcs,
+        op_kwargs = { "file_name" : "manufactured_country_of_each_brand.csv" },
+        )
 
+    staging = EmptyOperator(task_id="staging", trigger_rule=TriggerRule.ALL_SUCCESS)
 
 
 
     # Task dependencies
     start >> [scrape_carsome_website_to_csv, create_carsome_raw_table, get_brand_and_country_of_car_from_json_file]
     create_carsome_raw_table >> insert_data_to_postgres
-    insert_data_to_postgres >> create_carsome_curate_table >> perform_etl_then_save_to_csv  # >> load_data_to_google_cloud_storage
+    insert_data_to_postgres >> create_carsome_curate_table >> perform_etl_then_save_to_csv >> load_curated_data_to_google_cloud_storage
+    get_brand_and_country_of_car_from_json_file>> load_manufacture_brand_country_data_to_google_cloud_storage
+    [load_curated_data_to_google_cloud_storage, load_manufacture_brand_country_data_to_google_cloud_storage] >> staging
