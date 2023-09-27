@@ -53,7 +53,7 @@ def _scrape_data_then_insert_to_postgres():
     currency_list=[]
 
     # total number of pages parse from num_of_max_page
-    for page_num in range(1,num_of_max_page,1):
+    for page_num in range(1,num_of_max_page+1,1):
     # for page_num in range(1,2,1):
         base_url = f"https://www.carsome.co.th/buy-car?pageNo={page_num}"
 
@@ -114,5 +114,5 @@ def _scrape_data_then_insert_to_postgres():
                        )
     
     conn = engine.connect()
-    conn.execute("TRUNCATE TABLE carsome_scraped")
+    conn.execute("TRUNCATE TABLE raw_carsome_scraped")
     df.to_sql('raw_carsome_scraped', con = engine, if_exists = 'append', chunksize = 1000)

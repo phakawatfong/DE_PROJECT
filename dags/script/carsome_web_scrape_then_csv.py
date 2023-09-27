@@ -40,7 +40,7 @@ def _scrape_data_to_dataframe_then_csv():
     currency_list=[]
 
     # total number of pages parse from num_of_max_page
-    for page_num in range(1,num_of_max_page,1):
+    for page_num in range(1,num_of_max_page+1,1):
     # for page_num in range(1,2,1):
         base_url = f"https://www.carsome.co.th/buy-car?pageNo={page_num}"
 
