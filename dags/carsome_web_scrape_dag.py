@@ -13,6 +13,7 @@ from script.carsome_web_scrape_insert_to_postgres import _scrape_data_then_inser
 from script.etl_then_insert_to_curated_zone_postgres import _etl_then_save_to_csv #, _load_data_to_gcs
 from script.convert_json_data_to_csv import _get_car_brand_data
 from script.upload_csv_to_gcs import _load_data_to_gcs
+from script.load_data_from_gcs_to_bigquery import _get_data_from_gcs_then_load_to_bq
 
 
 csv_file_list = ["crt_carsome_web_scraped.csv", "manufactured_country_of_each_brand.csv"]
@@ -109,6 +110,18 @@ with DAG(
 
     staging = EmptyOperator(task_id="staging", trigger_rule=TriggerRule.ALL_SUCCESS)
 
+    get_carsome_from_gcs_then_load_to_bq = PythonOperator(
+        task_id = "get_carsome_data_from_gcs_then_load_to_bq",
+        python_callable = _get_data_from_gcs_then_load_to_bq,
+        op_kwargs={'table_name': 'crt_carsome_web_scraped'},
+    )
+
+    get_brand_data_from_gcs_then_load_to_bq = PythonOperator(
+        task_id = "get_brand_data_from_gcs_then_load_to_bq",
+        python_callable = _get_data_from_gcs_then_load_to_bq,
+        op_kwargs={'table_name': 'manufacturer_country'},
+        )
+
 
 
     # Task dependencies
@@ -117,3 +130,4 @@ with DAG(
     insert_data_to_postgres >> create_carsome_curate_table >> perform_etl_then_save_to_csv >> load_curated_data_to_google_cloud_storage
     get_brand_and_country_of_car_from_json_file>> load_manufacture_brand_country_data_to_google_cloud_storage
     [load_curated_data_to_google_cloud_storage, load_manufacture_brand_country_data_to_google_cloud_storage] >> staging
+    staging >> [get_carsome_from_gcs_then_load_to_bq, get_brand_data_from_gcs_then_load_to_bq]
