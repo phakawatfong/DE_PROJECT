@@ -6,7 +6,7 @@ adding dimension columns, and mapping the brand of the car with the origin count
 Furthermore, requests some  API customer data in order to run a scenario in which a person is offered a deal for buying a 2nd-handed used car.
 
 
-<img width="959" alt="image" src="https://github.com/phakawatfong/carSome_Project/assets/105853659/3b4c4536-03f7-4c8e-acaa-24db0703f685">
+<img width="959" alt="image" src="[https://github.com/phakawatfong/carSome_Project/assets/105853659/3b4c4536-03f7-4c8e-acaa-24db0703f685](https://github.com/phakawatfong/carSome_Project/blob/main/pictures/carsome_project_overview.png)">
 
 
 
