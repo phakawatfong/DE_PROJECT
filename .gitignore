@@ -5,3 +5,4 @@ __pycache__
 env_conf/*
 logs/
 *.lock
+output/raw*
