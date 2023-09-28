@@ -76,8 +76,15 @@ CREATE DATABASE carsome_db;
 
 ## Working with Google Cloud Platform (GCP)
 
-
 ### create custom-role to access GoogleCloudStorage
-- 
-- 
-- 
+- storage.buckets.create
+- storage.objects.create
+- storage.objects.delete
+
+### create custom-role to get data from GoogleCloudStorage and Load to Bigquery
+-   bigquery.jobs.create
+-   bigquery.tables.create
+-   bigquery.tables.get
+-   bigquery.tables.update
+-   bigquery.tables.updateData
+-   storage.objects.get
