@@ -5,22 +5,9 @@ from sqlalchemy import create_engine
 from configparser import ConfigParser
 import pandas as pd
 
-
-from google.cloud import storage
-from google.oauth2 import service_account
-
 OUTPUT_PATH = "/opt/airflow/output"
 CONFIG_PATH="/opt/airflow/env_conf"
-
-POSTGRES_CONFIG_PATH = f"{CONFIG_PATH}/config.conf"
-GCS_SERVICE_ACCOUNT_PATH = f"{CONFIG_PATH}/carsome-load-csv-to-gcs.json"
-
-PROJECT_ID = "carsome-400009"
-BUCKET_NAME = "cars_second_handed_retail_bucket"
-BUSINESS_DOMAIN = "AUTOMOTIVE"
-DATA = "carsome_web_scraped"
-
-location = "asia-southeast1"
+POSTGRES_CONFIG_PATH=f"{CONFIG_PATH}/config.conf"
 
 def _etl_then_save_to_csv():
 
@@ -76,23 +63,3 @@ def _etl_then_save_to_csv():
     
     conn.execute("TRUNCATE TABLE crt_carsome_scraped")
     crt_carsome_df.to_sql('crt_carsome_scraped', con=conn, if_exists='replace',index=False)
-
-
-# def _load_data_to_gcs():
-
-#     source_file_name = f"{OUTPUT_PATH}/carsome_postgres.csv"
-#     destination_blob_name = f"{BUSINESS_DOMAIN}/{DATA}/{DATA}.csv"
-
-#     # Setup Google Cloud Storage connection
-#     gcs_service_account_info = json.load(open(GCS_SERVICE_ACCOUNT_PATH))
-#     gcs_credentials = service_account.Credentials.from_service_account_info(gcs_service_account_info)
-#     gcs_client = storage.Client(project=PROJECT_ID, credentials=gcs_credentials)
-
-#     bucket = gcs_client.bucket(BUCKET_NAME)
-#     blob = bucket.blob(destination_blob_name)
-
-#     blob.upload_from_filename(source_file_name)
-
-#     print(
-#         f"File {source_file_name} uploaded to {destination_blob_name}."
-#     )
