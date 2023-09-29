@@ -14,7 +14,7 @@ from script.etl_then_insert_to_curated_zone_postgres import _etl_then_save_to_cs
 from script.convert_json_data_to_csv import _get_car_brand_data
 from script.upload_csv_to_gcs import _load_data_to_gcs
 from script.load_data_from_gcs_to_bigquery import _get_data_from_gcs_then_load_to_bq
-
+from script.get_fake_customer_data_from_api import _get_fake_cusomter_data_from_api_then_save_to_csv
 
 csv_file_list = ["crt_carsome_web_scraped.csv", "manufactured_country_of_each_brand.csv"]
 
@@ -58,13 +58,18 @@ with DAG(
     )
 
     scrape_carsome_website_to_csv = PythonOperator(
-        task_id = "scrape_data_then_save_to_csv_file",
+        task_id = "scrape_data_then_save_to_csv",
         python_callable = _scrape_data_to_dataframe_then_csv,
     )
 
     get_brand_and_country_of_car_from_json_file = PythonOperator(
         task_id = "convert_json_brand_of_car_to_csv",
         python_callable = _get_car_brand_data,
+    )
+
+    get_fake_cusomter_data_from_api_task = PythonOperator(
+        task_id = "get_fake_customer_data_from_api_then_save_to_csv",
+        python_callable = _get_fake_cusomter_data_from_api_then_save_to_csv,
     )
 
     insert_data_to_postgres = PythonOperator(
@@ -125,7 +130,7 @@ with DAG(
 
 
     # Task dependencies
-    start >> [scrape_carsome_website_to_csv, create_carsome_raw_table, get_brand_and_country_of_car_from_json_file]
+    start >> [scrape_carsome_website_to_csv, create_carsome_raw_table, get_brand_and_country_of_car_from_json_file, get_fake_cusomter_data_from_api_task]
     create_carsome_raw_table >> insert_data_to_postgres
     insert_data_to_postgres >> create_carsome_curate_table >> perform_etl_then_save_to_csv >> load_curated_data_to_google_cloud_storage
     get_brand_and_country_of_car_from_json_file>> load_manufacture_brand_country_data_to_google_cloud_storage
