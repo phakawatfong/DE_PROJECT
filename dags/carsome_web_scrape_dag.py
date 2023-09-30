@@ -8,7 +8,7 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.utils import timezone
 
-from script.carsome_web_scrape_insert_to_postgres import _scrape_data
+from script.carsome_web_scrape import _scrape_data
 from script.etl_then_insert_to_curated_zone_postgres import _etl_then_save_to_csv #, _load_data_to_gcs
 from script.convert_json_data_to_csv import _get_car_brand_data
 from script.upload_csv_to_gcs import _load_data_to_gcs
