@@ -3,11 +3,12 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import os 
+from datetime import date
 
 from sqlalchemy import create_engine
 from configparser import ConfigParser
 
-def _scrape_data_then_insert_to_postgres():
+def _scrape_data(mode_input):
 
     # define configuration
     config = ConfigParser()
@@ -23,7 +24,8 @@ def _scrape_data_then_insert_to_postgres():
                                 host=details_dict["host"],
                                 port=details_dict["port"],
                                 db=details_dict["db"]))
-
+    
+    today = date.today()
     OUTPUT_PATH='/opt/airflow/output'
     base_url = "https://www.carsome.co.th/buy-car"
     html = requests.get(base_url)
@@ -53,7 +55,7 @@ def _scrape_data_then_insert_to_postgres():
     currency_list=[]
 
     # total number of pages parse from num_of_max_page
-    for page_num in range(1,num_of_max_page+1,1):
+    for page_num in range(1, num_of_max_page+1, 1):
     # for page_num in range(1,2,1):
         base_url = f"https://www.carsome.co.th/buy-car?pageNo={page_num}"
 
@@ -113,6 +115,9 @@ def _scrape_data_then_insert_to_postgres():
                        'transmission_type' : drive_type_list}
                        )
     
-    conn = engine.connect()
-    conn.execute("TRUNCATE TABLE raw_carsome_scraped")
-    df.to_sql('raw_carsome_scraped', con = engine, if_exists = 'append', chunksize = 1000)
+    if mode_input == 'to_postgres' :
+        conn = engine.connect()
+        conn.execute("TRUNCATE TABLE raw_carsome_scraped")
+        df.to_sql('raw_carsome_scraped', con = engine, if_exists = 'append', chunksize = 1000)
+    elif mode_input == 'to_csv' :
+        df.to_csv(f"{OUTPUT_PATH}/raw_carsome_web_scraped-{today}.csv" , index=False)
