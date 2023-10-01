@@ -7,7 +7,7 @@ from configparser import ConfigParser
 
 
 # get currency exchange rate free API from fixer.io 
-# https://fixer.io/documentation
+# https://anyapi.io/
 def _get_fake_cusomter_data_from_api_then_save_to_csv():
     today = date.today()
     OUTPUT_PATH='/opt/airflow/output'
