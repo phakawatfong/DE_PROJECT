@@ -8,6 +8,10 @@ Furthermore, requests some  API customer data in order to run a scenario in whic
 
 ![project_overview](https://github.com/phakawatfong/carSome_Project/blob/main/pictures/carsome_project_overview.png)
 
+## Carsome Dashboard !!!
+[https://lookerstudio.google.com/reporting/406b1b02-f9dd-42ec-a0ce-2096ca9e5c81]
+![project_dashboard](https://github.com/phakawatfong/carSome_Project/blob/main/pictures/carsome-dashboard.png)
+
 
 
 ## fetch docker-compose.yml files
