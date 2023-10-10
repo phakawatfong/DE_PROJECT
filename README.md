@@ -12,7 +12,17 @@ Furthermore, requests some  API customer data in order to run a scenario in whic
 [https://lookerstudio.google.com/reporting/406b1b02-f9dd-42ec-a0ce-2096ca9e5c81]
 ![project_dashboard](https://github.com/phakawatfong/carSome_Project/blob/main/pictures/carsome-dashboard.png)
 
+## Build DockerImages and Startup the Airflow with Docker Container. (first time only)
 
+```
+docker compose up --build
+```
+
+## Startup docker each time you want to work on a project
+
+```
+docker compose up
+```
 
 ## fetch docker-compose.yml files
 
