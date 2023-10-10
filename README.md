@@ -24,6 +24,11 @@ mkdir -p ./dags ./logs ./plugins ./config ./env_conf ./dags/script ./import_data
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 ```
 
+### Build Docker Images and startup the Airflow with Docker (first time ).
+
+```
+docker compose up --build
+```
 
 ## Command to go into Postgres shell
 
